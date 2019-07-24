@@ -177,7 +177,11 @@ typedef void (^AFURLConnectionProgressiveOperationProgressBlock)(NSInteger bytes
             @synchronized(self) {
                 [[NSFileManager new] moveItemAtPath:[self tempPath] toPath:_targetPath error:&localError];
                 if (localError) {
-                    _fileError = localError;
+                    // due to a bug, sometimes the same file gets downloaded
+                    // checking for the files existance fixes the error
+                    if (![[NSFileManager new] fileExistsAtPath:_targetPath]) {
+                        _fileError = localError;
+                    }
                 }
             }
         }
