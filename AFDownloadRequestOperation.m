@@ -166,7 +166,7 @@ typedef void (^AFURLConnectionProgressiveOperationProgressBlock)(NSInteger bytes
             if (self.isDeletingTempFileOnCancel) {
                 [self deleteTempFileWithError:&localError];
                 if (localError) {
-                    _fileError = localError;
+                    self->_fileError = localError;
                 }
             }
             return;
@@ -175,9 +175,9 @@ typedef void (^AFURLConnectionProgressiveOperationProgressBlock)(NSInteger bytes
         }else if(!self.error) {
             // move file to final position and capture error
             @synchronized(self) {
-                [[NSFileManager new] moveItemAtPath:[self tempPath] toPath:_targetPath error:&localError];
+                [[NSFileManager new] moveItemAtPath:[self tempPath] toPath:self->_targetPath error:&localError];
                 if (localError) {
-                    _fileError = localError;
+                    self->_fileError = localError;
                 }
             }
         }
@@ -188,7 +188,7 @@ typedef void (^AFURLConnectionProgressiveOperationProgressBlock)(NSInteger bytes
             });
         } else {
             dispatch_async(self.successCallbackQueue ?: dispatch_get_main_queue(), ^{
-                success(self, _targetPath);
+                success(self, self->_targetPath);
             });
         }
     };
